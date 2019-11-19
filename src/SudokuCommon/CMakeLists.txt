@@ -13,6 +13,12 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(SudokuCommon PRIVATE -Wall -Wextra)	
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # MSVC
-    target_compile_options(SudokuCommon PRIVATE /EHsc /MTd /W2 /c)
+	# Debug config compiler options
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+	# Release config compiler options
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+	# Cross-configuration compiler options
+    target_compile_options(SudokuCommon PRIVATE /EHsc /W4 /WX /c)
+	# Preprocessor definitions
     target_compile_definitions(SudokuCommon PRIVATE COMMON_EXPORT)
 endif()

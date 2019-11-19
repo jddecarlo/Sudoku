@@ -13,15 +13,22 @@ private:
     {
     public:
         InnerSquareState();
-        virtual ~InnerSquareState();
+        virtual ~InnerSquareState() = default;
+
+        int& operator[](int i);
+        const int& operator[](int i) const;
 
     private:
         std::array<int, 9> m_cells;
     };
 
 public:
-    BoardState();
-    virtual ~BoardState();
+    BoardState() = default;
+    virtual ~BoardState() = default;
+
+protected:
+    InnerSquareState& operator[](int i);
+    const InnerSquareState& operator[](int i) const;
 
 private:
     std::array<InnerSquareState, 9> m_board;

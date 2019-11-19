@@ -13,3 +13,17 @@ target_include_directories(SudokuGame PUBLIC
                           "${PROJECT_BINARY_DIR}"
                           "${PROJECT_SOURCE_DIR}/SudokuCommon"
                           )
+
+# Let's set compiler-specific flags
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # G++
+    target_compile_options(SudokuGame PRIVATE -Wall -Wextra)	
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # MSVC
+	# Debug config compiler options
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+	# Release config compiler options
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+	# Cross-configuration compiler options
+    target_compile_options(SudokuGame PRIVATE /EHsc /W4 /WX /c)
+endif()
