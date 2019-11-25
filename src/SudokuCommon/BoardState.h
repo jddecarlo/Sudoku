@@ -5,36 +5,34 @@
 
 #include <array>
 #include "Defines.h"
+#include "CellState.h"
 
 class BoardState
 {
-private:
-    class InnerSquareState
-    {
-    public:
-        InnerSquareState();
-        virtual ~InnerSquareState() = default;
-
-        int& operator[](int i);
-        const int& operator[](int i) const;
-
-    private:
-        std::array<int, 9> m_cells;
-    };
-
 public:
-    BoardState() = default;
+    BoardState();
+    BoardState(const std::array<int, 81>& cellValues);
+    BoardState(const BoardState& boardState);
+    BoardState(BoardState&& boardState) noexcept;
     virtual ~BoardState() = default;
 
+    BoardState& operator=(const BoardState& boardState);
+    BoardState& operator=(BoardState&& boardState) noexcept;
+
+    bool IsBlankCell(int i) const;
+    std::set<int>&& CalculatePossibleValues(int i) const;
+
+    bool IsBoardComplete() const;
+
 protected:
-    InnerSquareState& operator[](int i);
-    const InnerSquareState& operator[](int i) const;
+    std::set<int>&& GetRelatedCellIndices(int i) const;
 
 private:
-    std::array<InnerSquareState, 9> m_board;
+    std::array<CellState, 81> m_board;
 };
 
 extern "C" EXPORTED BoardState* CreateEmptyBoardState();
+extern "C" EXPORTED BoardState* CreateBoardStateFromArray(const std::array<int, 81>& cellValues);
 extern "C" EXPORTED void ReleaseBoardState(BoardState* pBoardState);
 
 DECLARE_SMART_PTR(BoardState)
