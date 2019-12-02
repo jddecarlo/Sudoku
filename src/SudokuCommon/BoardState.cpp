@@ -3,6 +3,10 @@
 
 #include <algorithm>
 #include "BoardState.h"
+#pragma warning( push )
+#pragma warning( disable : 26495 26451 4458 4996 4267 4244 )
+#include "csv.h"
+#pragma warning ( pop )
 
 using namespace std;
 
@@ -14,6 +18,11 @@ extern "C" BoardState* CreateEmptyBoardState()
 extern "C" BoardState* CreateBoardStateFromArray(const array<int, 81>& cellValues)
 {
     return new BoardState(cellValues);
+}
+
+extern "C" EXPORTED BoardState * CreateBoardStateFromFile(const string filePath)
+{
+    return new BoardState(filePath);
 }
 
 extern "C" void ReleaseBoardState(BoardState* pBoardState)
@@ -29,6 +38,24 @@ BoardState::BoardState(const array<int, 81>& cellValues) : m_board()
 {
     for (int i = 0; i < 81; i++)
         m_board[i].SetValue(cellValues[i]);
+}
+
+BoardState::BoardState(const string filePath)
+{
+    io::CSVReader<9> in(filePath);
+    //in.read_header(io::ignore_extra_column, "vendor", "size", "speed");
+    //std::string vendor; int size; double speed;
+    //while (in.read_row(vendor, size, speed)) {
+        // do stuff with the data
+    //}
+
+    array<int, 9> buffer;
+    auto iterator = m_board.begin();
+    for (int i = 0; i < 9; i++)
+    {
+        if (in.read_row(buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7], buffer[8]))
+            std::for_each(buffer.begin(), buffer.end(), [&iterator](const int& value) { iterator++->SetValue(value); });
+    }
 }
 
 BoardState::BoardState(const BoardState& boardState)
@@ -56,6 +83,11 @@ BoardState& BoardState::operator=(BoardState&& boardState) noexcept
     boardState.m_board.fill(blankCell);
 
     return *this;
+}
+
+CellState& BoardState::operator[](const int i)
+{
+    return m_board[i];
 }
 
 bool BoardState::IsBlankCell(int i) const

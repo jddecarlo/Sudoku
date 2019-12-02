@@ -4,6 +4,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 #include "Defines.h"
 #include "CellState.h"
 
@@ -12,12 +13,14 @@ class BoardState
 public:
     BoardState();
     BoardState(const std::array<int, 81>& cellValues);
+    BoardState(const std::string filePath);
     BoardState(const BoardState& boardState);
     BoardState(BoardState&& boardState) noexcept;
     virtual ~BoardState() = default;
 
     BoardState& operator=(const BoardState& boardState);
     BoardState& operator=(BoardState&& boardState) noexcept;
+    CellState& operator[](const int i);
 
     bool IsBlankCell(int i) const;
     std::set<int>&& CalculatePossibleValues(int i) const;
@@ -33,6 +36,7 @@ private:
 
 extern "C" EXPORTED BoardState* CreateEmptyBoardState();
 extern "C" EXPORTED BoardState* CreateBoardStateFromArray(const std::array<int, 81>& cellValues);
+extern "C" EXPORTED BoardState* CreateBoardStateFromFile(const std::string filePath);
 extern "C" EXPORTED void ReleaseBoardState(BoardState* pBoardState);
 
 DECLARE_SMART_PTR(BoardState)
